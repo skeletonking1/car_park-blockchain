@@ -24,6 +24,9 @@ const Home = props => {
                         New License
                     </Button>
                     <Button variant="outlined" onClick={() => goPage("/verification")} className="w-75 my-4" color="primary">
+                        License 
+                    </Button>
+                    <Button variant="outlined" onClick={() => goPage("/license-verification")} className="w-75 my-4" color="primary">
                         License Verification
                     </Button>
                 </div>

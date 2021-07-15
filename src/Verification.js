@@ -93,7 +93,7 @@ class Home extends Component {
                           <AccessibleOutlinedIcon color="primary" style ={{fontSize : 70}}/>
                         </div>
                         <div className="my-4" style ={{fontSize : 50 , color: '#0b3c6d'}}>
-                        License Verification
+                        License
                         </div>
                         
                         <Card  variant="outlined" className="w-75 m-4">

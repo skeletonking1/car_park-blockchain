@@ -9,7 +9,7 @@ import CardContent from '@material-ui/core/CardContent';
 import LocalParkingIcon from '@material-ui/icons/LocalParking';
 import AccessibleOutlinedIcon from '@material-ui/icons/AccessibleOutlined';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
-
+import CheckIcon from '@material-ui/icons/Check';
 
 
 class Home extends Component {
@@ -43,21 +43,41 @@ class Home extends Component {
         this.setState({ loading: false })
       })
     }
+    async verifyWithVehicleNumber() {
+        this.setState({ loading: true })
+        this.state.carPark.methods.VerifyVehicleNumber(this.state.vehicleNumber).call({ from: this.state.account })
+        .then(function(result){
+            console.log(result);
+            this.setState({vehicleNumberVerified:result})
+            this.setState({ loading: false })
+        }.bind(this));
+    }
+    async verifyUserData() {
+        this.setState({ loading: true })
+        this.state.carPark.methods.VerifyUserData(this.state.surName,this.state.firstName,this.state.birthDate,this.state.birthPlace).call({ from: this.state.account })
+        .then(function(result){
+            console.log(result);
+            this.setState({userDataVerified:result})
+            this.setState({ loading: false })
+        }.bind(this));
+    }
     constructor(props) {
       super(props)
       this.state = {
         account: '',
         surName:'',
         firstName:'',
-        birthDate: new Date(),
+        birthDate:'',
         birthPlace:'',
         vehicleNumber:'',
         idLicense:'',
-        releaseDate:'',
-        expireDate:'',
-        loading: true
+         loading: true,
+        vehicleNumberVerified: false,
+        userDataVerified: false
       }
       this.createLicense = this.createLicense.bind(this)
+      this.verifyWithVehicleNumber = this.verifyWithVehicleNumber.bind(this)
+      this.verifyUserData = this.verifyUserData.bind(this)
     }
     goPage= (page)=> {
       this.props.history.push(page);
@@ -79,7 +99,7 @@ class Home extends Component {
                           
                         </div>
                         <div className="my-4" style ={{fontSize : 50 , color: '#0b3c6d'}}>
-                        New License 
+                        License Verification
                         </div>
                         
                         <Card  variant="outlined" className="w-75 m-4">
@@ -90,6 +110,16 @@ class Home extends Component {
                             </CardContent>
 
                         </Card>
+                        <TextField className="w-75 m-4" id="vehiclenumber_text" label="Vehicle Number Plate" variant="outlined" 
+                          value = {this.state.vehicleNumber} onChange={(evt) => this.setState({vehicleNumber:evt.target.value})} />
+                      {this.state.loading
+                      ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
+                      : this.state.vehicleNumberVerified?
+                      <div><CheckIcon color = "primary"/> Vehicle Number verified successfully.</div>:
+                      <Button variant="contained" color="primary" className = "m-4" onClick = {this.verifyWithVehicleNumber}>
+                          Vehicle Number is not verified. please Verify it.
+                        </Button>
+                      }
                         <TextField className="w-75 m-4" id="surname_text" label="SurName" variant="outlined" 
                           value = {this.state.surName} onChange={(evt) => this.setState({surName:evt.target.value})} />
                         <TextField className="w-75 m-4" id="firstname_text" label="FirstName" variant="outlined" 
@@ -105,47 +135,16 @@ class Home extends Component {
                         InputLabelProps={{
                           shrink: true,
                         }}
-                      />
-                        {/* <TextField className="w-75 m-4" id="birthdate_text" label="Birth Date" variant="outlined" 
-                          value = {this.state.birthDate} onChange={(evt) => this.setState({birthDate:evt.target.value})} /> */}
+                        />
                         <TextField className="w-75 m-4" id="birthplace_text" label="Birth Place" variant="outlined" 
                           value = {this.state.birthPlace} onChange={(evt) => this.setState({birthPlace:evt.target.value})} />
-                        <TextField className="w-75 m-4" id="idlicense_text" label="ID License" variant="outlined" 
-                          value = {this.state.idLicense} onChange={(evt) => this.setState({idLicense:evt.target.value})} />
-                        {/* <TextField className="w-75 m-4" id="releasedate_text" label="License Release Date" variant="outlined" 
-                          value = {this.state.releaseDate} onChange={(evt) => this.setState({releaseDate:evt.target.value})} /> */}
-                        <TextField
-                        id="releasedate_text"
-                        label="License Release Date"
-                        variant="outlined"
-                        type="date"
-                        value = {this.state.releaseDate} 
-                        onChange={(evt) => this.setState({releaseDate:evt.target.value})}                        
-                        className="w-75 m-4"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        />
-                        <TextField className="w-75 m-4" id="expiredate_text" label="License Expire Date" variant="outlined" 
-                          value = {this.state.expireDate} onChange={(evt) => this.setState({expireDate:evt.target.value})} />
-                        <TextField
-                        id="expiredate_text"
-                        label="ExpireDate"
-                        variant="outlined"
-                        type="date"
-                        value = {this.state.expireDate} 
-                        onChange={(evt) => this.setState({expireDate:evt.target.value})}                        
-                        className="w-75 m-4"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        />
-                        <TextField className="w-75 m-4" id="vehiclenumber_text" label="Vehicle Number Plate" variant="outlined" 
-                          value = {this.state.vehicleNumber} onChange={(evt) => this.setState({vehicleNumber:evt.target.value})} />
-                      {this.state.loading
+                        
+                        {this.state.loading
                       ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
-                      : <Button variant="contained" color="primary" className = "m-4" onClick = {this.createLicense}>
-                          Ok
+                      : this.state.userDataVerified
+                      ?<div><CheckIcon color = "primary"/> User Data verified successfully.</div>
+                      :<Button variant="contained" color="primary" className = "m-4" onClick = {this.verifyUserData}>
+                          UserData is not verified. please Verify it.
                         </Button>
                       }
                         
@@ -153,23 +152,7 @@ class Home extends Component {
                     </div>
                 </div>
             </Container>
-            {/* <div className="d-flex justify-content-center">
             
-              <div className = "col-md-6">
-  
-              
-              
-                <div className="row">
-                  
-                  <main role="main" className="col-lg-12 d-flex justify-content-center">
-                    { this.state.loading
-                      ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
-                      : <TodoList tasks={this.state.tasks} createTask={this.createTask} />
-                    }
-                  </main>
-                </div>
-              </div>
-            </div> */}
           </div>
            
         );

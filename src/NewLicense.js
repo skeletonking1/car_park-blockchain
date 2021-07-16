@@ -37,8 +37,13 @@ class Home extends Component {
     }
     async createLicense() {
       this.setState({ loading: true })
-      this.state.carPark.methods.AddLicense(this.state.surName,this.state.firstName,this.state.birthDate,this.state.birthPlace,
-        this.state.idLicense,this.state.releaseDate,this.state.expireDate,this.state.vehicleNumber).send({ from: this.state.account })
+      // const userData = {
+      //   surName: this.state.surName,
+      //   firstName: this.state.firstName,
+      //   birthDate: this.state.birthDate,
+      //   birthPlace: this.state.birthPlace
+      // };
+      this.state.carPark.methods.AddLicense(this.state.surName,this.state.firstName, this.state.birthDate, this.state.birthPlace,this.state.idLicense,this.state.releaseDate,this.state.expireDate,this.state.vehicleNumber).send({ from: this.state.account })
       .once('receipt', (receipt) => {
         this.setState({ loading: false })
       })

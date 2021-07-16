@@ -9,7 +9,7 @@ import CardContent from '@material-ui/core/CardContent';
 import LocalParkingIcon from '@material-ui/icons/LocalParking';
 import AccessibleOutlinedIcon from '@material-ui/icons/AccessibleOutlined';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
-import CheckIcon from '@material-ui/icons/Check';
+import LicenseData from './LicenseData';
 
 
 class Home extends Component {
@@ -35,30 +35,29 @@ class Home extends Component {
       this.setState({ carPark })
       this.setState({ loading: false })
     }
-    async createLicense() {
-      this.setState({ loading: true })
-      this.state.carPark.methods.AddLicense(this.state.surName,this.state.firstName,this.state.birthDate,this.state.birthPlace,
-        this.state.idLicense,this.state.releaseDate,this.state.expireDate,this.state.vehicleNumber).send({ from: this.state.account })
-      .once('receipt', (receipt) => {
-        this.setState({ loading: false })
-      })
-    }
+    // async createLicense() {
+    //   this.setState({ loading: true })
+    //   this.state.carPark.methods.AddLicense(this.state.surName,this.state.firstName,this.state.birthDate,this.state.birthPlace,
+    //     this.state.idLicense,this.state.releaseDate,this.state.expireDate,this.state.vehicleNumber).send({ from: this.state.account })
+    //   .once('receipt', (receipt) => {
+    //     this.setState({ loading: false })
+    //   })
+    // }
     async verifyWithVehicleNumber() {
         this.setState({ loading: true })
-        this.state.carPark.methods.VerifyVehicleNumber(this.state.vehicleNumber).call({ from: this.state.account })
+        this.state.carPark.methods.VehicleNumbertoID(this.state.vehicleNumber).call({ from: this.state.account })
         .then(function(result){
-            console.log(result);
-            this.setState({vehicleNumberVerified:result})
-            this.setState({ loading: false })
+          console.log(result)
+          this.setState({idLicense:result})    
+          this.setState({ loading: false })
         }.bind(this));
     }
     async verifyUserData() {
         this.setState({ loading: true })
-        this.state.carPark.methods.VerifyUserData(this.state.surName,this.state.firstName,this.state.birthDate,this.state.birthPlace).call({ from: this.state.account })
+        this.state.carPark.methods.UserdatatoID(this.state.surName,this.state.firstName,this.state.birthDate,this.state.birthPlace).call({ from: this.state.account })
         .then(function(result){
-            console.log(result);
-            this.setState({userDataVerified:result})
-            this.setState({ loading: false })
+          this.setState({idLicense:result})    
+          this.setState({ loading: false })
         }.bind(this));
     }
     constructor(props) {
@@ -71,11 +70,10 @@ class Home extends Component {
         birthPlace:'',
         vehicleNumber:'',
         idLicense:'',
-         loading: true,
-        vehicleNumberVerified: false,
-        userDataVerified: false
+        loading: true,
+        
       }
-      this.createLicense = this.createLicense.bind(this)
+      // this.createLicense = this.createLicense.bind(this)
       this.verifyWithVehicleNumber = this.verifyWithVehicleNumber.bind(this)
       this.verifyUserData = this.verifyUserData.bind(this)
     }
@@ -95,31 +93,33 @@ class Home extends Component {
                             <HomeOutlinedIcon color="primary" style ={{fontSize : 50}} onClick={() => this.goPage("/")} />
                           </Button>
                           <AccessibleOutlinedIcon color="primary" style ={{fontSize : 70}}/>
-                         
-                          
                         </div>
                         <div className="my-4" style ={{fontSize : 50 , color: '#0b3c6d'}}>
                         License Verification
                         </div>
                         
-                        <Card  variant="outlined" className="w-75 m-4">
+                        {/* <Card  variant="outlined" className="w-75 m-4">
                           <CardContent>
                             <div>
                               your account : {this.state.account}
                             </div>
                             </CardContent>
 
-                        </Card>
+                        </Card> */}
                         <TextField className="w-75 m-4" id="vehiclenumber_text" label="Vehicle Number Plate" variant="outlined" 
                           value = {this.state.vehicleNumber} onChange={(evt) => this.setState({vehicleNumber:evt.target.value})} />
-                      {this.state.loading
-                      ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
-                      : this.state.vehicleNumberVerified?
-                      <div><CheckIcon color = "primary"/> Vehicle Number verified successfully.</div>:
-                      <Button variant="contained" color="primary" className = "m-4" onClick = {this.verifyWithVehicleNumber}>
-                          Vehicle Number is not verified. please Verify it.
-                        </Button>
-                      }
+                        
+                        {this.state.loading
+                        ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
+                        :<Button variant="contained" color="primary" className = "m-4" onClick = {this.verifyWithVehicleNumber}>
+                            Verify with Vehicle Number Plate.
+                          </Button>
+                        }
+                        {this.state.idLicense===""
+                        ? <div> Vehicle number is not verified</div>
+                        : null
+                        }
+                        
                         <TextField className="w-75 m-4" id="surname_text" label="SurName" variant="outlined" 
                           value = {this.state.surName} onChange={(evt) => this.setState({surName:evt.target.value})} />
                         <TextField className="w-75 m-4" id="firstname_text" label="FirstName" variant="outlined" 
@@ -141,12 +141,14 @@ class Home extends Component {
                         
                         {this.state.loading
                       ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
-                      : this.state.userDataVerified
-                      ?<div><CheckIcon color = "primary"/> User Data verified successfully.</div>
-                      :<Button variant="contained" color="primary" className = "m-4" onClick = {this.verifyUserData}>
-                          UserData is not verified. please Verify it.
+                        :<Button variant="contained" color="primary" className = "m-4" onClick = {this.verifyUserData}>
+                           Verify with user data.
                         </Button>
                       }
+                      {this.state.idLicense===""
+                        ? <div> UserData  is not verified</div>
+                        :<LicenseData idLicense={this.state.idLicense}/>
+                        }
                         
 
                     </div>

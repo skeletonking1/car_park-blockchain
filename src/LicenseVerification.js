@@ -56,6 +56,7 @@ class Home extends Component {
         this.setState({ loading: true })
         this.state.carPark.methods.UserdatatoID(this.state.surName,this.state.firstName,this.state.birthDate,this.state.birthPlace).call({ from: this.state.account })
         .then(function(result){
+          console.log(result)
           this.setState({idLicense:result})    
           this.setState({ loading: false })
         }.bind(this));
@@ -115,10 +116,7 @@ class Home extends Component {
                             Verify with Vehicle Number Plate.
                           </Button>
                         }
-                        {this.state.idLicense===""
-                        ? <div> Vehicle number is not verified</div>
-                        : null
-                        }
+                        
                         
                         <TextField className="w-75 m-4" id="surname_text" label="SurName" variant="outlined" 
                           value = {this.state.surName} onChange={(evt) => this.setState({surName:evt.target.value})} />
@@ -145,10 +143,8 @@ class Home extends Component {
                            Verify with user data.
                         </Button>
                       }
-                      {this.state.idLicense===""
-                        ? <div> UserData  is not verified</div>
-                        :<LicenseData idLicense={this.state.idLicense}/>
-                        }
+                      <LicenseData idLicense={this.state.idLicense}/>
+                      
                         
 
                     </div>
